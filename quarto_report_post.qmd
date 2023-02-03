@@ -1,0 +1,137 @@
+---
+title: "Meu primeiro relatório" # -----> Título
+subtitle: "Exemplo: Relatório em Quarto" # -----> Subtítulo
+author: "Ariane Hayana" # -----> Autoria
+date: "`r format(Sys.Date())`" # -----> Data de publicação
+date-format: short # -----> Formato de data curto: dd/mm/aaaa
+lang: pt # -----> Linguagem: português
+format: 
+  html: 
+    code-fold: true # -----> code-fold: `true` para "ocultar" o bloco de códigos
+    theme: 
+      light: [pulse,custom.scss] # Tema modo claro
+      dark: [cyborg,custom.scss] # Tema modo escuro
+title-block-banner: true # -----> Estilo de banner no topo do documento
+bibliography: references.bib # -----> Referências do documento
+---
+
+```{r}
+#| echo: false
+#| fig-width: 3
+#| fig-height: 3
+
+# Script para logo na página
+htmltools::img(
+  src = knitr::image_uri(file.path("img", "logo.png")),
+  alt = 'logo',
+  style = 'position:absolute;
+  top:-10px;
+  left:-4px;
+  width: 15%;
+  height: 30%;
+  filter: drop-shadow(0 0 0.65rem #e1e1e1c2);
+ #e1e1e1c2);
+  padding:40px;'
+)
+```
+
+```{r}
+#| echo: false
+#| out.width: "100%"
+#| fig-cap: "Arte por [Allison Horst.](https://github.com/allisonhorst/stats-illustrations/blob/main/julie-mine-quarto-keynote/quarto_thankyou.png)"
+
+knitr::include_graphics("img/img-1.png")
+```
+
+::: column-margin
+#### O que é a R-Ladies?
+
+[R-Ladies](https://rladies.org/) é uma organização mundial cuja missão é promover a diversidade de gênero na comunidade da linguagem R.
+
+**R-Ladies São Paulo** integra, orgulhosamente, a organização R-Ladies Global, em São Paulo.
+
+As atividades incluem meetups e mentorias em um ambiente seguro e amigável.
+
+---
+
+#### Objetivo
+
+Nosso principal objetivo é promover a linguagem computacional estatística R compartilhando conhecimento, assim, quem tiver interesse na linguagem será bem-vinda, independente do nível de conhecimento.
+
+---
+
+#### Público-alvo
+
+Nosso principal público-alvo são as pessoas que se identificam com gêneros sub-representados na comunidade R, portanto: mulheres cis, mulheres trans, homens trans, pessoas não-binárias e queer.
+
+---
+
+#### Missão
+
+Como uma iniciativa de diversidade, a missão das R-Ladies é alcançar uma representação proporcional de pessoas de gêneros atualmente sub-representados na comunidade R, incentivando, inspirando e capacitando-as.
+
+<br>
+
+Fonte: [R-Ladies São Paulo](https://rladies-sp.org/sobre.html)
+:::
+
+## Exemplo com tabelas
+
+::: callout-note
+# Exemplo utilizando os pacotes: `dados` [@dados] e `reactable` [@reactable] e `dplyr` [@dplyr]
+
+Conjunto de dados de `Gapminder` sobre expectativa de vida, PIB per capita e população por país.
+:::
+
+```{r}
+#| warning: false
+#| message: false
+
+library(dados)
+library(reactable)
+library(dplyr)
+
+dados_gapminder |> # Base do pacote {dados}
+  select(continente, pais, ano, pib_per_capita) |> # Selecionando algumas colunas
+  reactable(
+    groupBy = "continente", # Agrupando pela coluna 'continente'
+    searchable = TRUE, # Inserindo uma busca na tabela
+    outlined = TRUE, # Linhas na tabela
+    columns = list(ano = colDef(sortable = TRUE)) # Ordem crescente na coluna 'ano'
+  )
+
+```
+
+## Exemplo com gráficos
+
+::: callout-note
+# Exemplo utilizando os pacotes: `dados` [@dados], `gganimate` [@gganimate] e `ggplot2` [@ggplot2]
+
+Dados completos sobre nomes de bebês fornecidos pela Administração de Segurança Social dos EUA. Inclui todos os nomes com pelo menos 5 usos.
+:::
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+#| warning: false
+#| message: false
+
+library(gganimate)
+library(ggplot2)
+
+bebes |>
+  filter(nome %in% c("Patricia", "Helen")) |> 
+  ggplot(aes(
+    x = ano, 
+    y = n,
+    group = nome,
+    color = nome
+  )) +
+  geom_line() +
+  geom_point() +
+  xlab("Ano") + 
+  ylab("Número de bebês nascidos") +
+  transition_reveal(ano) +
+  theme_classic()
+
+```
